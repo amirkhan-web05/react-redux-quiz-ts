@@ -1,24 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useDispatch } from "react-redux";
+import { Question } from "./components/Question";
+import { useAppSelector } from "./hooks/useAppSelector";
+import { backQuestionIndex, nextQuestionIndex } from "./redux/actions/question";
 
 function App() {
+  const dispatch = useDispatch()
+  const questions = useAppSelector(state => state.questions.questions)
+  const questionIndex = useAppSelector(state => state.questions.questionIndex)
+  const show = useAppSelector(state => state.questions.show)
+
+  const nextQuestion = () => {
+    dispatch(nextQuestionIndex(questionIndex))
+  }
+
+  const backQuestion = () => {
+    dispatch(backQuestionIndex(questionIndex))
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Quiz</h1>
+      {!show && <div>
+        <Question 
+          questions={questions} 
+          questionIndex={questionIndex}
+          currentAnswer={null}
+          show={false}
+          score={1}
+        />
+        <button onClick={backQuestion}>Back</button>
+        <button onClick={nextQuestion}>Next</button>
+      </div>}
+      {show && <div>
+          <h1>Result</h1>
+          <button onClick={() => dispatch({type:'RESTART'})}>Restart</button>
+        </div>}
     </div>
   );
 }
